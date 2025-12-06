@@ -10,10 +10,12 @@ env:
   LOCATION: 'europe-west1'
   PROJECT_NUMBER: '177424230750'
   SERVICE_ACCOUNT_ID: 'github-actions-sa'
-  SERVICE_ACCOUNT_EMAIL: '${{ env.SERVICE_ACCOUNT_ID }}@${{ env.PROJECT_ID }}.iam.gserviceaccount.com'
+  #SERVICE_ACCOUNT_EMAIL: '${{ env.SERVICE_ACCOUNT_ID }}@${{ env.PROJECT_ID }}.iam.gserviceaccount.com'
+  SERVICE_ACCOUNT_EMAIL: 'github-actions-sa@enseeiht-spark-lab.iam.gserviceaccount.com'
   WORKLOAD_IDENTITY_POOL_ID: 'github-pool'
   WORKLOAD_IDENTITY_PROVIDER_ID: 'github-provider'
-  WORKLOAD_IDENTITY_PROVIDER: 'projects/${{ env.PROJECT_NUMBER }}/locations/global/workloadIdentityPools/${{ env.WORKLOAD_IDENTITY_POOL_ID }}/providers/${{ env.WORKLOAD_IDENTITY_PROVIDER_ID }}'
+  #WORKLOAD_IDENTITY_PROVIDER: 'projects/${{ env.PROJECT_NUMBER }}/locations/global/workloadIdentityPools/${{ env.WORKLOAD_IDENTITY_POOL_ID }}/providers/${{ env.WORKLOAD_IDENTITY_PROVIDER_ID }}'
+  WORKLOAD_IDENTITY_PROVIDER: 'projects/177424230750/locations/global/workloadIdentityPools/github-pool/providers/github-provider'
 
 jobs:
   deploy-infra:
