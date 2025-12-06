@@ -165,6 +165,7 @@ gcloud iam workload-identity-pools providers create-oidc "$WIF_PROVIDER_ID" \
   --workload-identity-pool="$WIF_POOL_ID" \
   --display-name="GitHub Provider" \
   --attribute-mapping="google.subject=assertion.sub,attribute.actor=assertion.actor,attribute.repository=assertion.repository" \
+  --attribute-condition="assertion.repository=='$GITHUB_REPO'" \
   --issuer-uri="https://token.actions.githubusercontent.com"
 ```
 
@@ -176,7 +177,7 @@ Here, an association is created between the [[#Create the Service Account|servic
 gcloud iam service-accounts add-iam-policy-binding "${SA_EMAIL}" \
   --project="$PROJECT_ID" \
   --role="roles/iam.workloadIdentityUser" \
-  --member="principalSet://iam.googleapis.com/projects/${PROJECT_ID}/locations/global/workloadIdentityPools/${WIF_POOL_ID}/attribute.repository/${GITHUB_REPO}"
+  --member="principalSet://iam.googleapis.com/projects/${PROJECT_NUMBER}/locations/global/workloadIdentityPools/${WIF_POOL_ID}/attribute.repository/${GITHUB_REPO}"
 ```
 
 ## Get the Provider ID
@@ -190,6 +191,8 @@ gcloud iam workload-identity-pools providers describe "$WIF_PROVIDER_ID" \
   --workload-identity-pool="$WIF_POOL_ID" \
   --format="value(name)"
 ```
+
+According to me, the provider ID should look like this: `projects/${PROJECT_NUMBER}/locations/global/workloadIdentityPools/${WIF_POOL_ID}/providers/${WIF_PROVIDER_ID}`
 
 ## Testing the Setup
 
@@ -215,7 +218,6 @@ jobs:
         name: 'Authenticate to GCP'
         uses: 'google-github-actions/auth@v1'
         with:
-          # The long string from Step 3
-          workload_identity_provider: ''
-          service_account: 'github-actions-sa@YOUR_PROJECT_ID.iam.gserviceaccount.com'
+          workload_identity_provider: 'projects/${PROJECT_NUMBER}/locations/global/workloadIdentityPools/${WIF_POOL_ID}/providers/${WIF_PROVIDER_ID}'
+          service_account: '${SA_ID}@${PROJECT_ID}.iam.gserviceaccount.com'
 ```
