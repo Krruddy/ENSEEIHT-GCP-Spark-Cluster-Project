@@ -192,17 +192,31 @@ gcloud iam workload-identity-pools providers describe "$WIF_PROVIDER_ID" \
   --format="value(name)"
 ```
 
-According to me, the provider ID should look like this: `projects/${PROJECT_NUMBER}/locations/global/workloadIdentityPools/${WIF_POOL_ID}/providers/${WIF_PROVIDER_ID}`
+According to me, the provider ID should look like this:
+
+```bash
+projects/${PROJECT_NUMBER}/locations/global/workloadIdentityPools/${WIF_POOL_ID}/providers/${WIF_PROVIDER_ID}
+```
 
 ## Testing the Setup
 
 ```yaml
-name: Deploy Spark Cluster
+name: Deploy Infrastructure
 
 on:
   push:
     branches: [ "main" ]
   workflow_dispatch:
+
+env:
+  PROJECT_ID: #'enseeiht-spark-lab' 
+  LOCATION: 'europe-west1'
+  PROJECT_NUMBER: #'177424230750'
+  SERVICE_ACCOUNT_ID: #'github-actions-sa'
+  SERVICE_ACCOUNT_EMAIL: '${{ env.SERVICE_ACCOUNT_ID }}@${{ env.PROJECT_ID }}.iam.gserviceaccount.com'
+  WORKLOAD_IDENTITY_POOL_ID: #'github-pool'
+  WORKLOAD_IDENTITY_PROVIDER_ID: #'github-provider'
+  WORKLOAD_IDENTITY_PROVIDER: 'projects/${{ env.PROJECT_NUMBER }}/locations/global/workloadIdentityPools/${{ env.WORKLOAD_IDENTITY_POOL_ID }}/providers/${{ env.WORKLOAD_IDENTITY_PROVIDER_ID }}'
 
 jobs:
   deploy-infra:
@@ -218,6 +232,6 @@ jobs:
         name: 'Authenticate to GCP'
         uses: 'google-github-actions/auth@v1'
         with:
-          workload_identity_provider: 'projects/${PROJECT_NUMBER}/locations/global/workloadIdentityPools/${WIF_POOL_ID}/providers/${WIF_PROVIDER_ID}'
+          workload_identity_provider: '${{ env.WORKLOAD_IDENTITY_PROVIDER }}'
           service_account: '${SA_ID}@${PROJECT_ID}.iam.gserviceaccount.com'
 ```
