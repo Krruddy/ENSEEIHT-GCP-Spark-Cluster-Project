@@ -11,6 +11,51 @@ Dependencies:
 - [Terraform](https://developer.hashicorp.com/terraform)
 - [GCLoud](https://docs.cloud.google.com/sdk/docs/install-sdk)
 
+# Infrastructure
+
+## Network Architecture
+
+We create a Virtual Private Cloud (VPC) to host our Spark cluster. The VPC will contain the two subnets:
+
+- `public_subnet`: Hosts the edge node which allows SSH access to the cluster.
+- `private_subnet`: Hosts the Spark master and worker nodes.
+
+The VPC's firewall rules will be configured to allow necessary traffic:
+
+- **Cluster Chatter**: Allow all communication between the nodes in the VPC on all ports (might be too permissive, and might be changed later).
+- **SSH Access**: Allow SSH access (port 22) to the bastion host from the internet.
+
+A router will also be created on the VPC to allow outbound internet access for all nodes through NAT.
+
+> [!NOTE]
+> The configuration which allows the edge node to be accessed from the internet is done when instantiating it, not during the configuration of the VPC.
+
+## Virtual Machines
+
+Three types of VMs will be used in this project:
+
+- **Edge Node**: Node used to access the cluster from the internet.
+- **Spark Master**: Node that manages the Spark cluster.
+- **Spark Workers**: Nodes that perform the actual data processing.
+
+The [recommended hardware specifications](https://spark.apache.org/docs/latest/hardware-provisioning.html) are quite high. In this project, we will underprovision the hardware to save costs, and upgrade if necessary.
+
+Because of the nature of this project (learning purpose, not production), we will limit ourselves to using [E2 machine series](https://docs.cloud.google.com/compute/docs/general-purpose-machines#e2_machine_types).
+
+All of the VMs will use the latest [Debian](https://docs.cloud.google.com/compute/docs/images/os-details#debian) image available on GCP.
+
+When it comes to the [disk types](https://docs.cloud.google.com/compute/docs/general-purpose-machines#e2_disks), we will first attempt to use the cheapest option, which is the `pd-standard` (HDD). If the performance is not satisfactory, we will switch to `pd-balanced` (SSD),  which is more balanced.
+
+The edge node doesn't need to be very powerful since it is only used for accessing the cluster and submitting jobs, so we will use an [e2-micro](https://docs.cloud.google.com/compute/docs/general-purpose-machines#sharedcore) instance type. It's boot disk will be 15GB in size.
+
+The Spark master and worker nodes need more resources, so they will use the [e2-small](https://docs.cloud.google.com/compute/docs/general-purpose-machines#sharedcore) instance types as a starting point. Their boot disks will be 20GB in size, and additional data disks of 10GB will be attached to each worker for Spark storage.
+
+|              |   `edge`   |  `master`  |  `worker`  |
+| :----------: | :--------: | :--------: | :--------: |
+| Machine Type | `e2-micro` | `e2-small` | `e2-small` |
+|  Boot Disk   |     15     |     20     |     20     |
+|  Spark Disk  |            |     10     |     10     |
+
 # Configuration
 
 The following variables are used throughout the setup process. Place them in your shell environment or in a script to reuse them easily.
