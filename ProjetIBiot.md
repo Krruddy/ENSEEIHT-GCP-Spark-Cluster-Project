@@ -2,7 +2,11 @@
 
 ## Overview
 
-This project focuses on automating the deployment of an Apache Spark cluster using Terraform and Ansible on Google Cloud Platform (GCP). Terraform will handle the provisioning of infrastructure such as virtual machines, networking, and security configurations. Ansible will be used to install, configure, and manage Apache Spark across the cluster. The goal is to create a fully automated, repeatable, and secure big data environment.
+This project focuses on automating the deployment of an Apache Spark cluster using Terraform and Ansible on Google Cloud Platform (GCP). 
+
+Terraform will handle the provisioning of infrastructure such as virtual machines, networking, and security configurations. 
+
+Ansible will be used to install, configure, and manage Apache Spark across the cluster. The goal is to create a fully automated, repeatable, and secure big data environment.
 
 ## Description
 

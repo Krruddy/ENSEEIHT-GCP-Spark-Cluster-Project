@@ -46,6 +46,12 @@ variable "infrastructure_tier" {
   default     = "minimal"
 }
 
+variable "state_bucket" {
+  description = "Name of the state bucket"
+  type = string
+  default = "spark-lab-tfstate"
+}
+
 locals {
   machine_specs = {
     minimal = {

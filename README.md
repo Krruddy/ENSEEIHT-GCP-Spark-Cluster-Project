@@ -42,7 +42,7 @@ The [recommended hardware specifications](https://spark.apache.org/docs/latest/h
 
 Because of the nature of this project (learning purpose, not production), we will limit ourselves to using [E2 machine series](https://docs.cloud.google.com/compute/docs/general-purpose-machines#e2_machine_types).
 
-All of the VMs will use the latest [Debian](https://docs.cloud.google.com/compute/docs/images/os-details#debian) image available on GCP.
+All the VMs will use the latest [Debian](https://docs.cloud.google.com/compute/docs/images/os-details#debian) image available on GCP.
 
 When it comes to the [disk types](https://docs.cloud.google.com/compute/docs/general-purpose-machines#e2_disks), we will first attempt to use the cheapest option, which is the `pd-standard` (HDD). If the performance is not satisfactory, we will switch to `pd-balanced` (SSD),  which is more balanced.
 
@@ -65,7 +65,7 @@ PROJECT_ID="enseeiht-spark-lab"
 PROJECT_NUMBER="$(gcloud projects describe "$PROJECT_ID" --format='value(projectNumber)')"
 
 REGION="europe-west1"
-TF_STATE_BUCKET="ibdiot-tfstate"
+TF_STATE_BUCKET="spark-lab-tfstate"
 
 SA_ID="github-actions-sa"
 SA_EMAIL="${SA_ID}@${PROJECT_ID}.iam.gserviceaccount.com"
@@ -280,3 +280,28 @@ jobs:
           workload_identity_provider: '${{ env.WORKLOAD_IDENTITY_PROVIDER }}'
           service_account: '${SA_ID}@${PROJECT_ID}.iam.gserviceaccount.com'
 ```
+
+# Terraform State (Memory Bucket)
+
+The memory of Terraform, e.g. the state of the infrastructure (`terraform.tfstate`) , will be stored in a [GCS bucket](https://docs.cloud.google.com/storage/docs/json_api/v1/buckets).
+
+The decision of storing Terraforms state in a GCS bucket is made to:
+
+- Prevent two pipelines from updating the infrastructure at the same time which could corrupt it (lock support).
+- Keep track of the state of the infrastructure over time (versioning support).
+- Simultaneous read access from multiple actors.
+
+Since it is the Terraform state, Terroform can't create it, because the state needs to be available for Terraform to run. It will be created manually using the following commands:
+
+```bash
+gcloud storage buckets create "gs://${TF_STATE_BUCKET}" \
+  --project="$PROJECT_ID" \
+  --location="$REGION" \
+  --uniform-bucket-level-access
+# Enable Versioning
+gcloud storage buckets update "gs://${TF_STATE_BUCKET}" \
+  --versioning
+```
+
+- `--uniform-bucket-level-access`: Permissions are managed using IAM only, rather than a combination of IAM and ACLs.
+- `--versioning`: When a file is overwritten in this bucket, GCP keeps a copy of the old version instead of deleting it ([1](https://docs.cloud.google.com/storage/docs/using-object-versioning#whats_next)).
