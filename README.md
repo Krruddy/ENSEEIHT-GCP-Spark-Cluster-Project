@@ -54,7 +54,7 @@ The Spark master and worker nodes need more resources, so they will use the [e2-
 | :----------: | :--------: | :--------: | :--------: |
 | Machine Type | `e2-micro` | `e2-small` | `e2-small` |
 |  Boot Disk   |     15     |     20     |     20     |
-|  Spark Disk  |            |     10     |     10     |
+|  Spark Disk  |     -      |     -      |     10     |
 
 # Configuration
 
@@ -108,6 +108,38 @@ gcloud services enable compute.googleapis.com \
 
 > [!NOTE]
 > The compute engine API is required to create VMs, disks, networks, etc from anywhere (Web UI, CLI, ...). If not enabled it is impossible to interract meaningfully with the project.
+
+Later, `terraform init` and `terraform apply` will be used locally as part of the development process. Terraform will use the credentials from `gcloud` to authenticate to GCP. For that reason, we need to make sure that the account used by `gcloud` has the same IAM permissions as the service account created for GitHub Actions.
+
+If the account used by `gcloud` is the account that was used to create the project, it should already have the necessary permissions. That is because the account that creates a project is automatically granted the `Owner` role on that project.
+
+Otherwise, the necessary roles must be granted to the account used by `gcloud` (replace `<YOUR_EMAIL>` with the email of that account):
+
+```bash
+# Grant Compute Admin role
+gcloud projects add-iam-policy-binding "$PROJECT_ID" \
+  --member="user:<YOUR_EMAIL>" \
+  --role="roles/compute.admin"
+
+# Grant Storage Admin role
+gcloud projects add-iam-policy-binding "$PROJECT_ID" \
+  --member="user:<YOUR_EMAIL>" \
+  --role="roles/storage.admin"
+
+# Grant Service Account User role
+gcloud projects add-iam-policy-binding "$PROJECT_ID" \
+  --member="user:<YOUR_EMAIL>" \
+  --role="roles/iam.serviceAccountUser"
+```
+
+> [!NOTE]
+> You can check which account is currently used by `gcloud` by running `gcloud auth list`.
+
+Once the user has the necessary permissions, run the following command to set up Application Default Credentials (ADC) e.g., allowing Terraform to authenticate to GCP ([1](https://docs.cloud.google.com/sdk/gcloud/reference/alpha/auth/application-default/login)):
+
+```bash
+gcloud auth application-default login
+```
 
 # GitHub - GCP Credentials
 
@@ -305,3 +337,51 @@ gcloud storage buckets update "gs://${TF_STATE_BUCKET}" \
 
 - `--uniform-bucket-level-access`: Permissions are managed using IAM only, rather than a combination of IAM and ACLs.
 - `--versioning`: When a file is overwritten in this bucket, GCP keeps a copy of the old version instead of deleting it ([1](https://docs.cloud.google.com/storage/docs/using-object-versioning#whats_next)).
+
+# Terraform
+
+To make the Terraform code more readable and maintainable, it is split into multiple files:
+
+- `main.tf`: Defines the required Terraform providers and their versions for the project.
+- `providers.tf`: Configures the Google Cloud provider with project-specific settings like project ID and default region/zone.
+- `variables.tf`: Declares all input variables (like `project_id`, `worker_count`) and local values used throughout the configuration.
+- `network.tf`: Defines all networking resources, including the VPC, subnets, firewall rules, and the Cloud NAT gateway.
+- `compute.tf`: Defines all virtual machine instances (edge, master, workers) and their attached data disks.
+- `backend.tf`: Configures the GCS backend for storing the Terraform state file remotely.
+
+First, we use the following command to verify whether the configuration is syntactically valid and internally consistent (regardless of variables or existing state) ([1](https://developer.hashicorp.com/terraform/cli/commands/validate)):
+
+```bash
+terraform -chdir=./terraform validate
+```
+
+> [!WARNING]
+> The command will fail if the provider is not yet installed. In that case, follow the next step to install the provider, then run the validate command again.
+
+The following step will:
+
+- Initialize the backend (in `backend.tf`).
+- Download and install the required provider plugins (in `main.tf`).
+
+Run the following command ([1](https://developer.hashicorp.com/terraform/cli/commands/init)):
+
+```bash
+terraform -chdir=./terraform init
+```
+
+The following command creates an execution plan, which lets you preview the changes that Terraform plans to make to your infrastructure ([1](https://developer.hashicorp.com/terraform/cli/commands/plan)):
+
+```bash
+terraform -chdir=./terraform plan
+```
+
+> [!WARNING]
+> Terraform will fetch the public SSH key with the path `~/.ssh/id_ed25519.pub`. Make sure that this file exists (find [here](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent) details on how to generate an SSH key).
+
+## Compute
+
+The NAT is configured ...
+
+## Terraform State (Bucket)
+
+## Outputs

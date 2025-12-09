@@ -37,19 +37,13 @@ variable "ssh_user" {
 
 variable "ssh_pub_key_path" {
   description = "Path to public key"
-  default     = "~/.ssh/id_rsa.pub"
+  default     = "~/.ssh/id_ed25519.pub"
 }
 
 variable "infrastructure_tier" {
   description = "Tier of infrastructure: minimal, standard, or high-performance"
   type        = string
   default     = "minimal"
-}
-
-variable "state_bucket" {
-  description = "Name of the state bucket"
-  type = string
-  default = "spark-lab-tfstate"
 }
 
 locals {

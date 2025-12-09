@@ -19,7 +19,7 @@ resource "google_compute_instance" "edge" {
   }
 
   metadata = {
-    ssh-keys = "${var.ssh_user}:${file(var.ssh_pub_key_path)}"
+    ssh-keys = "${var.ssh_user}:${file(path.expand(var.ssh_pub_key_path))}"
   }
 }
 
@@ -42,7 +42,7 @@ resource "google_compute_instance" "master" {
   }
 
   metadata = {
-    ssh-keys = "${var.ssh_user}:${file(var.ssh_pub_key_path)}"
+    ssh-keys = "${var.ssh_user}:${file(path.expand(var.ssh_pub_key_path))}"
   }
 }
 
@@ -80,6 +80,6 @@ resource "google_compute_instance" "workers" {
   }
 
   metadata = {
-    ssh-keys = "${var.ssh_user}:${file(var.ssh_pub_key_path)}"
+    ssh-keys = "${var.ssh_user}:${file(path.expand(var.ssh_pub_key_path))}"
   }
 }
