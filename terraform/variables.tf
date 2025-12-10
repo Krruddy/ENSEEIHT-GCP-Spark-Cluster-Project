@@ -35,9 +35,10 @@ variable "ssh_user" {
   default     = "user"
 }
 
-variable "ssh_pub_key_path" {
-  description = "Path to public key"
-  default     = "~/.ssh/id_ed25519.pub"
+variable "ssh_public_key_content" {
+  description = "The content of the public SSH key to be added to the VMs."
+  type        = string
+  sensitive   = true # Prevents Terraform from showing the key in plan outputs
 }
 
 variable "infrastructure_tier" {

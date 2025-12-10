@@ -49,5 +49,5 @@ jobs:
 
       - name: Terraform Plan
         id: plan
-        run: terraform -chdir=./terraform plan -no-color
+        run: terraform -chdir=./terraform plan -no-color -var="ssh_public_key_content=${{ secrets.SSH_PUBLIC_KEY }}"
         continue-on-error: true # Allows PR comments to be posted even if plan fails

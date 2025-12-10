@@ -376,7 +376,9 @@ terraform -chdir=./terraform plan
 ```
 
 > [!WARNING]
-> Terraform will fetch the public SSH key with the path `~/.ssh/id_ed25519.pub`. Make sure that this file exists (find [here](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent) details on how to generate an SSH key).
+> When run locally, Terraform will fetch the public SSH key with the path `~/.ssh/id_ed25519.pub`. 
+> 1. Make sure that this file exists (find [here](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent) details on how to generate an SSH key).
+> 2. Make sure that a `terraform.tvars` exists, and that it contains `ssh_public_key_content   = file("~/.ssh/id_ed25519.pub")`.
 
 ## Compute
 
