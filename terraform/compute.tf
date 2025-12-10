@@ -19,7 +19,7 @@ resource "google_compute_instance" "edge" {
   }
 
   metadata = {
-    ssh-keys = "${var.ssh_user}:${var.ssh_public_key_content}"
+    ssh-keys = "${var.ssh_user}:${var.ssh_public_key}"
   }
 }
 
@@ -42,7 +42,7 @@ resource "google_compute_instance" "master" {
   }
 
   metadata = {
-    ssh-keys = "${var.ssh_user}:${var.ssh_public_key_content}"
+    ssh-keys = "${var.ssh_user}:${var.ssh_public_key}"
   }
 }
 
@@ -55,7 +55,7 @@ resource "google_compute_disk" "hdfs_data" {
   zone  = var.zone
 }
 
-# 4. Spark Workers 
+# 4. Spark Workers
 resource "google_compute_instance" "workers" {
   count        = var.worker_count
   name         = "spk-wkr-${count.index + 1}"
@@ -80,6 +80,6 @@ resource "google_compute_instance" "workers" {
   }
 
   metadata = {
-    ssh-keys = "${var.ssh_user}:${var.ssh_public_key_content}"
+    ssh-keys = "${var.ssh_user}:${var.ssh_public_key}"
   }
 }

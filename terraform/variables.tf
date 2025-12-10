@@ -35,8 +35,8 @@ variable "ssh_user" {
   default     = "user"
 }
 
-variable "ssh_public_key_content" {
-  description = "The content of the public SSH key to be added to the VMs."
+variable "ssh_public_key" {
+  description = "Public SSH key to be added to the VMs."
   type        = string
   sensitive   = true # Prevents Terraform from showing the key in plan outputs
 }
