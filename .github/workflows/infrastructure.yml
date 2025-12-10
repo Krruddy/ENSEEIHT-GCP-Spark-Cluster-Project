@@ -53,7 +53,8 @@ jobs:
           # Pass Terraform variables as environment variables
           TF_VAR_project_id: ${{ env.PROJECT_ID }}
           TF_VAR_project_number: ${{ env.PROJECT_NUMBER }}
-          TF_VAR_ssh_public_key: ${{ secrets.SSH_PUBLIC_KEY_RUDDY }}
+          TF_VAR_ssh_public_key_ruddy: ${{ secrets.SSH_PUBLIC_KEY_RUDDY }}
+          TF_VAR_ssh_public_key_landry: ${{ secrets.SSH_PUBLIC_KEY_LANDRY }}
         run: |
           terraform -chdir=./terraform plan -no-color
         continue-on-error: true # Allows PR comments to be posted even if plan fails
