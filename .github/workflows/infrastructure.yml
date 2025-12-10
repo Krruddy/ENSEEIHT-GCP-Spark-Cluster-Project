@@ -49,5 +49,11 @@ jobs:
 
       - name: Terraform Plan
         id: plan
-        run: terraform -chdir=./terraform plan -no-color -var="ssh_public_key_content=${{ secrets.SSH_PUBLIC_KEY_RUDDY }}"
+        env:
+          # Pass Terraform variables as environment variables
+          TF_VAR_project_id: ${{ env.PROJECT_ID }}
+          TF_VAR_project_number: ${{ env.PROJECT_NUMBER }}
+          TF_VAR_ssh_public_key: ${{ secrets.SSH_PUBLIC_KEY_RUDDY }}
+        run: |
+          terraform -chdir=./terraform plan -no-color
         continue-on-error: true # Allows PR comments to be posted even if plan fails
