@@ -372,13 +372,25 @@ terraform -chdir=./terraform init
 The following command creates an execution plan, which lets you preview the changes that Terraform plans to make to your infrastructure ([1](https://developer.hashicorp.com/terraform/cli/commands/plan)):
 
 ```bash
-terraform -chdir=./terraform plan
+terraform -chdir=./terraform plan -out=tfplan
 ```
 
 > [!WARNING]
 > When run locally, Terraform will fetch the public SSH key with the path `~/.ssh/id_ed25519.pub`. 
 > 1. Make sure that this file exists (find [here](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent) details on how to generate an SSH key).
 > 2. Make sure that a `terraform.tvars` exists, and that it contains `ssh_public_key_content   = file("~/.ssh/id_ed25519.pub")`.
+
+The final step is to execute the operations proposed in the execution plan to create the infrastructure on GCP ([1](https://developer.hashicorp.com/terraform/cli/commands/apply)):
+
+```bash
+terraform -chdir=./terraform apply tfplan
+```
+
+> [!WARNING]
+> In this project, the `apply` command is run through GitHub Actions as part of the CI/CD pipeline. It should **NOT** be run locally.
+
+> [!NOTE]
+> The use of `tfplan` is to ensure that the exact same plan that was reviewed is applied.
 
 ## Compute
 
@@ -387,3 +399,52 @@ The NAT is configured ...
 ## Terraform State (Bucket)
 
 ## Outputs
+
+# GitHub Actions
+
+## Deploy Infrastructure
+
+The deployment of the infrastructure is done through the workflow: [infrastructure.yml](.github/workflows/infrastructure.yml).
+
+## Runs on
+
+The workflow is executed:
+
+- On push to the `main` branch
+- During pull requests to the `main`
+- When manually triggered
+
+## Jobs
+
+The workflow contains a single job: `deploy-infra`. This job is responsible for deploying the infrastructure to GCP using Terraform.
+
+### Permissions
+
+- `id-token: 'write'`: Allows the job to request OpenID Connect (OIDC) tokens, which are used for Workload Identity Federation to authenticate to GCP without long-lived credentials.
+- `contents: 'read'`: Allows the job to read and clone the contents of the repository, which is necessary for the step `actions/checkout@v3` (see later).
+
+## Steps
+
+### Checkout Code
+
+Since jobs run in a fresh virtual environment, the first step is to clone the repository using `actions/checkout@v3`.
+
+### Authenticate to GCP
+
+Uses the `google-github-actions/auth` action to authenticate to Google Cloud using Workload Identity Federation. This securely exchanges the GitHub Actions OIDC token for a short-lived GCP access token, removing the need to store long-lived service account keys in GitHub Secrets.
+
+### Setup Terraform
+
+Configures the runner with Terraform version `1.6.6` using the `hashicorp/setup-terraform` action, ensuring a consistent environment for all infrastructure operations.
+
+### Terraform Init
+
+Executes `terraform init` to initialize the working directory. This step downloads the required provider plugins (such as the Google Cloud provider) and configures the backend for state storage.
+
+### Terraform Validate
+
+Runs `terraform validate` to check the configuration files for syntax errors and internal consistency, ensuring the code is valid before attempting to plan or apply changes.
+
+### Terraform Apply
+
+Runs `terraform apply -auto-approve tfplan` to apply the changes defined in the Terraform configuration to the GCP infrastructure.

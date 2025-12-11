@@ -4,3 +4,5 @@
 *.tfvars
 *.tfplan
 .terraform/
+.gemini/
+gha-creds-*.json
