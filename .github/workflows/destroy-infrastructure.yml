@@ -1,0 +1,53 @@
+name: Destroy Infrastructure
+
+on:
+  workflow_dispatch:
+
+env:
+  PROJECT_ID: 'enseeiht-spark-lab'
+  LOCATION: 'europe-west1'
+  PROJECT_NUMBER: '177424230750'
+  SERVICE_ACCOUNT_EMAIL: 'github-actions-sa@enseeiht-spark-lab.iam.gserviceaccount.com'
+  WORKLOAD_IDENTITY_PROVIDER: 'projects/177424230750/locations/global/workloadIdentityPools/github-pool/providers/github-provider'
+
+jobs:
+  destroy-infra:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - id: 'auth'
+        name: 'Authenticate to GCP'
+        uses: 'google-github-actions/auth@v1'
+        with:
+          workload_identity_provider: '${{ env.WORKLOAD_IDENTITY_PROVIDER }}'
+          service_account: '${{ env.SERVICE_ACCOUNT_EMAIL }}'
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.6.6
+
+      - name: Terraform Init
+        id: init
+        run: terraform -chdir=./terraform init
+
+      - name: Terraform Validate
+        id: validate
+        run: terraform -chdir=./terraform validate -no-color
+
+      - name: Terraform Destroy
+        id: destroy
+        if: github.ref == 'refs/heads/main'
+        env:
+          # Pass Terraform variables as environment variables
+          TF_VAR_project_id: ${{ env.PROJECT_ID }}
+          TF_VAR_project_number: ${{ env.PROJECT_NUMBER }}
+          TF_VAR_ssh_public_key_ruddy: ${{ secrets.SSH_PUBLIC_KEY_RUDDY }}
+          TF_VAR_ssh_public_key_landry: ${{ secrets.SSH_PUBLIC_KEY_LANDRY }}
+        run: |
+          terraform -chdir=./terraform destroy -auto-approve -input=false

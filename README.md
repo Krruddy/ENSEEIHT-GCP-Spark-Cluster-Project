@@ -406,7 +406,7 @@ The NAT is configured ...
 
 The deployment of the infrastructure is done through the workflow: [infrastructure.yml](.github/workflows/infrastructure.yml).
 
-## Runs on
+### Runs on
 
 The workflow is executed:
 
@@ -414,37 +414,82 @@ The workflow is executed:
 - During pull requests to the `main`
 - When manually triggered
 
-## Jobs
+### Jobs
 
 The workflow contains a single job: `deploy-infra`. This job is responsible for deploying the infrastructure to GCP using Terraform.
 
-### Permissions
+#### Permissions
 
 - `id-token: 'write'`: Allows the job to request OpenID Connect (OIDC) tokens, which are used for Workload Identity Federation to authenticate to GCP without long-lived credentials.
 - `contents: 'read'`: Allows the job to read and clone the contents of the repository, which is necessary for the step `actions/checkout@v3` (see later).
 
-## Steps
+### Steps
 
-### Checkout Code
+#### Checkout Code
 
 Since jobs run in a fresh virtual environment, the first step is to clone the repository using `actions/checkout@v3`.
 
-### Authenticate to GCP
+#### Authenticate to GCP
 
 Uses the `google-github-actions/auth` action to authenticate to Google Cloud using Workload Identity Federation. This securely exchanges the GitHub Actions OIDC token for a short-lived GCP access token, removing the need to store long-lived service account keys in GitHub Secrets.
 
-### Setup Terraform
+#### Setup Terraform
 
 Configures the runner with Terraform version `1.6.6` using the `hashicorp/setup-terraform` action, ensuring a consistent environment for all infrastructure operations.
 
-### Terraform Init
+#### Terraform Init
 
 Executes `terraform init` to initialize the working directory. This step downloads the required provider plugins (such as the Google Cloud provider) and configures the backend for state storage.
 
-### Terraform Validate
+#### Terraform Validate
 
 Runs `terraform validate` to check the configuration files for syntax errors and internal consistency, ensuring the code is valid before attempting to plan or apply changes.
 
-### Terraform Apply
+#### Terraform Apply
 
 Runs `terraform apply -auto-approve tfplan` to apply the changes defined in the Terraform configuration to the GCP infrastructure.
+
+## Destroy Infrastructure
+
+The destruction of the infrastructure is done through the workflow: [destroy-infrastructure.yml](.github/workflows/destroy-infrastructure.yml).
+
+### Runs on
+
+The workflow is executed:
+
+- When manually triggered
+
+### Jobs
+
+The workflow contains a single job: `destroy-infra`. This job is responsible for destroying the infrastructure on GCP using Terraform.
+
+#### Permissions
+
+- `id-token: 'write'`: Allows the job to request OpenID Connect (OIDC) tokens, which are used for Workload Identity Federation to authenticate to GCP without long-lived credentials.
+- `contents: 'read'`: Allows the job to read and clone the contents of the repository, which is necessary for the step `actions/checkout@v3` (see later).
+
+### Steps
+
+#### Checkout Code
+
+Since jobs run in a fresh virtual environment, the first step is to clone the repository using `actions/checkout@v3`.
+
+#### Authenticate to GCP
+
+Uses the `google-github-actions/auth` action to authenticate to Google Cloud using Workload Identity Federation. This securely exchanges the GitHub Actions OIDC token for a short-lived GCP access token, removing the need to store long-lived service account keys in GitHub Secrets.
+
+#### Setup Terraform
+
+Configures the runner with Terraform version `1.6.6` using the `hashicorp/setup-terraform` action, ensuring a consistent environment for all infrastructure operations.
+
+#### Terraform Init
+
+Executes `terraform init` to initialize the working directory. This step downloads the required provider plugins (such as the Google Cloud provider) and configures the backend for state storage.
+
+#### Terraform Validate
+
+Runs `terraform validate` to check the configuration files for syntax errors and internal consistency, ensuring the code is valid before attempting to plan or apply changes.
+
+#### Terraform Destroy
+
+Runs `terraform -chdir=./terraform destroy -auto-approve -input=false` to destroy all resources defined in the Terraform configuration on GCP.
