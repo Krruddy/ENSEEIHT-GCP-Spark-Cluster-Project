@@ -21,6 +21,11 @@ resource "google_compute_instance" "edge" {
   metadata = {
     ssh-keys = "${var.ssh_user}:${var.ssh_public_key_ruddy}\n${var.ssh_user}:${var.ssh_public_key_landry}"
   }
+
+  labels = {
+    role = "edge"
+    subnet_type = "public"
+  }
 }
 
 # 2. The Spark Master
@@ -43,6 +48,11 @@ resource "google_compute_instance" "master" {
 
   metadata = {
     ssh-keys = "${var.ssh_user}:${var.ssh_public_key_ruddy}\n${var.ssh_user}:${var.ssh_public_key_landry}"
+  }
+
+  labels = {
+    role = "master"
+    subnet_type = "private"
   }
 }
 
@@ -81,5 +91,9 @@ resource "google_compute_instance" "workers" {
 
   metadata = {
     ssh-keys = "${var.ssh_user}:${var.ssh_public_key_ruddy}\n${var.ssh_user}:${var.ssh_public_key_landry}"
-  }
+
+  labels = {
+    role = "worker"
+    subnet_type = "private"
+  } }
 }
