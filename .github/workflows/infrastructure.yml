@@ -57,6 +57,8 @@ jobs:
           TF_VAR_project_number: ${{ env.PROJECT_NUMBER }}
           TF_VAR_ssh_public_key_ruddy: ${{ secrets.SSH_PUBLIC_KEY_RUDDY }}
           TF_VAR_ssh_public_key_landry: ${{ secrets.SSH_PUBLIC_KEY_LANDRY }}
+          TF_VAR_ssh_public_key_ansible_runner: ${{ secrets.SSH_PUBLIC_KEY_ANSIBLE_RUNNER }}
+
         run: |
           terraform -chdir=./terraform plan -no-color -input=false -out=tfplan
 
@@ -69,5 +71,6 @@ jobs:
           TF_VAR_project_number: ${{ env.PROJECT_NUMBER }}
           TF_VAR_ssh_public_key_ruddy: ${{ secrets.SSH_PUBLIC_KEY_RUDDY }}
           TF_VAR_ssh_public_key_landry: ${{ secrets.SSH_PUBLIC_KEY_LANDRY }}
+          TF_VAR_ssh_public_key_ansible_runner: ${{ secrets.SSH_PUBLIC_KEY_ANSIBLE_RUNNER }}
         run: |
           terraform -chdir=./terraform apply -auto-approve -input=false tfplan
