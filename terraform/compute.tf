@@ -91,6 +91,7 @@ resource "google_compute_instance" "workers" {
 
   metadata = {
     ssh-keys = "${var.ssh_user}:${var.ssh_public_key_ruddy}\n${var.ssh_user}:${var.ssh_public_key_landry}"
+  }
 
   labels = {
     role = "worker"
