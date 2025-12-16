@@ -493,3 +493,4 @@ Runs `terraform validate` to check the configuration files for syntax errors and
 #### Terraform Destroy
 
 Runs `terraform -chdir=./terraform destroy -auto-approve -input=false` to destroy all resources defined in the Terraform configuration on GCP.
+
