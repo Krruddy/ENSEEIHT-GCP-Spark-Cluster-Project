@@ -47,6 +47,12 @@ variable "ssh_public_key_landry" {
   sensitive   = true # Prevents Terraform from showing the key in plan outputs
 }
 
+variable "ssh_public_key_ansible_runner" {
+  description = "Ansible runner's Public SSH key to be added to the VMs."
+  type        = string
+  sensitive   = true # Prevents Terraform from showing the key in plan outputs
+}
+
 variable "infrastructure_tier" {
   description = "Tier of infrastructure: minimal, standard, or high-performance"
   type        = string
