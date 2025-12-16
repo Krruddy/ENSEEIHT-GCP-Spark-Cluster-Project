@@ -96,5 +96,5 @@ resource "google_compute_instance" "workers" {
   labels = {
     role = "worker"
     subnet_type = "private"
-  } }
+  }
 }
