@@ -1,0 +1,26 @@
+plugin: google.cloud.gcp_compute
+
+# Sets the name of the GCP project.
+projects:
+  - enseeiht-spark-lab
+
+# Auto-detection of the means of authentication to GCP.
+auth_kind: application
+
+keyed_groups:
+  # Create groups from GCE labels which will look like `<prefix>_<labels>_<value>`, for instance `gcp_role_worker`, or `gcp_subnet_type_private`.
+  - prefix: gcp
+    key: labels
+
+hostnames:
+  # By default the name of the VMs will be either the public IP, or the private one if it doesn't have a public IP.
+  # The following instruction makes it so that the name of the VM is it's actual name.
+  - name
+
+compose:
+  # The goal of the following line is to set the `ansible_host` variable, which holds the IP address used by Ansible to connect the nodes.
+  # We know that we have to cover two cases:
+  # - Edge Node: Has a Public IP -> Uses Public IP (`networkInterfaces[0].accessConfigs[0].natIP`).
+  # - Workers/Master: No Public IP -> Uses Private IP (`default(networkInterfaces[0].networkIP`).
+  # First we try to find the public address, and then if the result is non-existent, we use the private one.
+  ansible_host: networkInterfaces[0].accessConfigs[0].natIP | default(networkInterfaces[0].networkIP)
