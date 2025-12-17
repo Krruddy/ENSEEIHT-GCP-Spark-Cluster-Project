@@ -29,7 +29,9 @@ jobs:
       contents: 'read'
       id-token: 'write'
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
+
     steps:
+
       - name: Checkout repository
         uses: actions/checkout@v3
 
@@ -55,8 +57,7 @@ jobs:
           mkdir -p ~/.ssh/
           echo "${{ secrets.SSH_PRIVATE_KEY_ANSIBLE_RUNNER }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-      - name: Install Ansible
-        shell: bash
-        run: |
-          sudo apt update
-          sudo apt install -y ansible
+
+      - name: Run Ansible Playbook
+        working-directory: ./ansible
+        run: ansible-playbook site.yml
