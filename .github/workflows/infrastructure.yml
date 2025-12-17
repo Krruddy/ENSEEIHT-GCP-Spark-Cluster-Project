@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 env:
-  PROJECT_ID: 'enseeiht-spark-lab' 
+  PROJECT_ID: 'enseeiht-spark-lab'
   LOCATION: 'europe-west1'
   PROJECT_NUMBER: '177424230750'
   SERVICE_ACCOUNT_ID: 'github-actions-sa'
@@ -28,7 +28,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-      - uses: actions/checkout@v3
+        uses: actions/checkout@v3
 
       - id: 'auth'
         name: 'Authenticate to GCP'
