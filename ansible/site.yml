@@ -1,0 +1,9 @@
+# ==========================================
+# 1. Common Configuration (Run on ALL nodes)
+# ==========================================
+- name: Apply Common Configuration
+  hosts: all
+  become: yes
+  remote_user: user
+  roles:
+    - common       # Installs vim, curl, htop, net-tools
