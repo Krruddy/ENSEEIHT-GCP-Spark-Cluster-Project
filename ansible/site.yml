@@ -8,3 +8,4 @@
   roles:
     - common       # Installs vim, curl, htop, net-tools
     - java
+    - spark_base
