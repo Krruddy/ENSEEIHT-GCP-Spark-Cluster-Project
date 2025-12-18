@@ -7,3 +7,4 @@
   remote_user: user
   roles:
     - common       # Installs vim, curl, htop, net-tools
+    - java
