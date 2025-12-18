@@ -1,0 +1,17 @@
+---
+- name: Install OpenJDK
+  apt:
+    name: "{{ java_package }}"
+    state: present
+    update_cache: yes
+    cache_valid_time: 3600
+
+- name: Set JAVA_HOME in /etc/environment
+  lineinfile:
+    path: /etc/environment
+    state: present
+    regexp: '^JAVA_HOME='
+    line: 'JAVA_HOME={{ java_home }}'
+
+- name: Refresh Inventory to pick up environment changes # I don't know if this is necessary
+  meta: reset_connection
