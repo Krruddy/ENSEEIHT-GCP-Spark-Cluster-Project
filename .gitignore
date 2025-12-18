@@ -6,3 +6,6 @@
 .terraform/
 .gemini/
 gha-creds-*.json
+.idea/
+.vscode/
+*terraform.lock.hcl
