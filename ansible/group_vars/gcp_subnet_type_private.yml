@@ -1,0 +1,5 @@
+---
+# 1. We access the 'ansible_host' (Public IP) of the edge node dynamically.
+# 2. We use 'ssh -W' to tunnel the connection.
+ansible_ssh_common_args: >-
+  -o ProxyCommand="ssh -o StrictHostKeyChecking=no -W %h:%p -q user@{{ hostvars['edge-01']['ansible_host'] }}"
