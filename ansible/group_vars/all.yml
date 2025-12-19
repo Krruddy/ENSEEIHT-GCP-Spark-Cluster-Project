@@ -19,7 +19,7 @@ spark_destination_dir: "{{ spark_install_parent_dir }}/spark-{{ spark_version }}
 # Where the symlink points to, which is independent of the version as it will always be /opt/spark
 spark_link_dir: "/opt/spark"
 
-# The download URL 
+# The download URL
 spark_download_url: "https://dlcdn.apache.org/spark/spark-{{ spark_version }}/spark-{{ spark_version }}-bin-hadoop{{ spark_hadoop_version }}.tgz"
 
 # ==========================================
