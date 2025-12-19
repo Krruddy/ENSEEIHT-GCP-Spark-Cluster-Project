@@ -4,3 +4,26 @@
 # ==========================================
 java_package: "openjdk-17-jdk-headless"
 java_home: "/usr/lib/jvm/java-17-openjdk-amd64"
+
+# ==========================================
+# Spark Configuration
+# ==========================================
+spark_version: "3.5.7"
+spark_hadoop_version: "3"
+spark_checksum: "sha512:f3b7d5974d746b9aaecb19104473da91068b698a4d292177deb75deb83ef9dc7eb77062446940561ac9ab7ee3336fb421332b1c877292dab4ac1b6ca30f4f2e0"
+
+# Parent installation directory (in case you want to change it)
+spark_install_parent_dir: "/opt"
+# Actual installation directory (/opt/spark-3.5.7-bin-hadoop3)
+spark_destination_dir: "{{ spark_install_parent_dir }}/spark-{{ spark_version }}-bin-hadoop{{ spark_hadoop_version }}"
+# Where the symlink points to, which is independent of the version as it will always be /opt/spark
+spark_link_dir: "/opt/spark"
+
+# The download URL 
+spark_download_url: "https://dlcdn.apache.org/spark/spark-{{ spark_version }}/spark-{{ spark_version }}-bin-hadoop{{ spark_hadoop_version }}.tgz"
+
+# ==========================================
+# Spark Credentials
+# ==========================================
+spark_user: "spark"
+spark_group: "spark"

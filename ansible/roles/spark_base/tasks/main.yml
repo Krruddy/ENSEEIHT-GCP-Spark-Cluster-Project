@@ -1,0 +1,55 @@
+---
+- name: Create Spark group
+  group:
+    name: "{{ spark_group }}"
+    state: present
+    system: yes
+
+- name: Create Spark user
+  user:
+    name: "{{ spark_user }}"
+    group: "{{ spark_group }}"
+    shell: /bin/bash
+    system: yes
+    create_home: yes
+    home: "/home/{{ spark_user }}"
+
+
+- name: Ensure install directory exists # This is /opt
+  file:
+    path: "{{ spark_install_parent_dir }}"
+    state: directory
+    mode: '0755'
+
+- name: Download and Unarchive Spark
+  unarchive:
+    src: "{{ spark_download_url }}"
+    dest: "{{ spark_install_parent_dir }}"
+    remote_src: yes # Download from URL, is not a local file which is being copied to the virtual machines
+    owner: "{{ spark_user }}"
+    group: "{{ spark_group }}"
+    creates: "{{ spark_destination_dir }}/bin/spark-submit" # To avoid downloading again if `spark-submit` already exists
+
+- name: Create /opt/spark symlink
+  file:
+    src: "{{ spark_destination_dir }}"
+    dest: "{{ spark_link_dir }}" # Is `/opt/spark`
+    state: link
+    owner: "{{ spark_user }}"
+    group: "{{ spark_group }}"
+
+
+- name: Set SPARK_HOME environment variable system-wide
+  lineinfile:
+    path: /etc/environment
+    state: present
+    regexp: '^SPARK_HOME='
+    line: "SPARK_HOME={{ spark_link_dir }}"
+
+- name: Add Spark binaries to PATH system-wide
+  lineinfile:
+    path: /etc/profile.d/spark_path.sh
+    state: present
+    create: yes
+    mode: '0644'
+    line: 'export PATH=$PATH:{{ spark_link_dir }}/bin:{{ spark_link_dir }}/sbin'
