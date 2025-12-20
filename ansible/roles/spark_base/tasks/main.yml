@@ -23,8 +23,8 @@
 
 - name: Download and Unarchive Spark
   get_url:
-    src: "{{ spark_download_url }}"
-    dest: "{{ spark_install_parent_dir }}"
+    url: "{{ spark_download_url }}"
+    dest: "{{ spark_destination_dir }}"
     owner: "{{ spark_user }}"
     group: "{{ spark_group }}"
     checksum: "{{ spark_checksum }}"
