@@ -21,13 +21,20 @@
     state: directory
     mode: '0755'
 
-- name: Download and Unarchive Spark
+- name: Download Spark
   get_url:
     url: "{{ spark_download_url }}"
-    dest: "{{ spark_destination_dir }}"
+    dest: "{{ spark_destination_dir }}.tgz"
+    checksum: "{{ spark_checksum }}"
+
+- name: Unarchive Spark
+  unarchive:
+    src: "{{ spark_destination_dir }}.tgz"
+    dest: "{{ spark_install_parent_dir }}"
     owner: "{{ spark_user }}"
     group: "{{ spark_group }}"
-    checksum: "{{ spark_checksum }}"
+    remote_src: yes
+    creates: "{{ spark_destination_dir }}"
 
 - name: Create /opt/spark symlink
   file:
