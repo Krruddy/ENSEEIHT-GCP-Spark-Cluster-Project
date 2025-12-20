@@ -19,7 +19,7 @@ resource "google_compute_instance" "edge" {
   }
 
   metadata = {
-    ssh-keys = "${var.ssh_user}:${var.ssh_public_key_ruddy}\n${var.ssh_user}:${var.ssh_public_key_landry}\n${var.ssh_user}:${var.ssh_public_key_ansible_runner}"
+    ssh-keys = "${var.ssh_user}:${var.ssh_public_key_ruddy_laptop}\n${var.ssh_user}:${var.ssh_public_key_ruddy_dektop}\n${var.ssh_user}:${var.ssh_public_key_landry}\n${var.ssh_user}:${var.ssh_public_key_ansible_runner}"
   }
 
   labels = {
@@ -47,7 +47,7 @@ resource "google_compute_instance" "master" {
   }
 
   metadata = {
-    ssh-keys = "${var.ssh_user}:${var.ssh_public_key_ruddy}\n${var.ssh_user}:${var.ssh_public_key_landry}\n${var.ssh_user}:${var.ssh_public_key_ansible_runner}"
+    ssh-keys = "${var.ssh_user}:${var.ssh_public_key_ruddy_laptop}\n${var.ssh_user}:${var.ssh_public_key_ruddy_dektop}\n${var.ssh_user}:${var.ssh_public_key_landry}\n${var.ssh_user}:${var.ssh_public_key_ansible_runner}"
   }
 
   labels = {
@@ -90,7 +90,7 @@ resource "google_compute_instance" "workers" {
   }
 
   metadata = {
-    ssh-keys = "${var.ssh_user}:${var.ssh_public_key_ruddy}\n${var.ssh_user}:${var.ssh_public_key_landry}\n${var.ssh_user}:${var.ssh_public_key_ansible_runner}"
+    ssh-keys = "${var.ssh_user}:${var.ssh_public_key_ruddy_laptop}\n${var.ssh_user}:${var.ssh_public_key_ruddy_dektop}\n${var.ssh_user}:${var.ssh_public_key_landry}\n${var.ssh_user}:${var.ssh_public_key_ansible_runner}"
   }
 
   labels = {
