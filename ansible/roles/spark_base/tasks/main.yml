@@ -22,13 +22,12 @@
     mode: '0755'
 
 - name: Download and Unarchive Spark
-  unarchive:
+  get_url:
     src: "{{ spark_download_url }}"
     dest: "{{ spark_install_parent_dir }}"
-    remote_src: yes # Download from URL, is not a local file which is being copied to the virtual machines
     owner: "{{ spark_user }}"
     group: "{{ spark_group }}"
-    creates: "{{ spark_destination_dir }}/bin/spark-submit" # To avoid downloading again if `spark-submit` already exists
+    checksum: "{{ spark_checksum }}"
 
 - name: Create /opt/spark symlink
   file:
