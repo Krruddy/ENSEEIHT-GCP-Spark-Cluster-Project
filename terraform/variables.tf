@@ -35,8 +35,14 @@ variable "ssh_user" {
   default     = "user"
 }
 
-variable "ssh_public_key_ruddy" {
-  description = "Ruddy's Public SSH key to be added to the VMs."
+variable "ssh_public_key_ruddy_desktop" {
+  description = "Ruddy's desktop Public SSH key to be added to the VMs."
+  type        = string
+  sensitive   = true # Prevents Terraform from showing the key in plan outputs
+}
+
+variable "ssh_public_key_ruddy_laptop" {
+  description = "Ruddy's laptop Public SSH key to be added to the VMs."
   type        = string
   sensitive   = true # Prevents Terraform from showing the key in plan outputs
 }
