@@ -33,4 +33,5 @@
   remote_user: user
   roles:
     - hadoop_worker # HDFS Worker Node Configuration
+    - spark_worker # Spark Worker Node Configuration
   tags: worker
