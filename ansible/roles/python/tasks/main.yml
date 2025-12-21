@@ -1,0 +1,16 @@
+---
+- name: Install essential system packages
+  apt:
+    name:
+      - python3-pip
+      - python3-numpy
+      - python3-pandas
+    state: present
+    update_cache: yes
+
+- name: Set PYSPARK_PYTHON environment variable
+  lineinfile:
+    path: /etc/environment
+    state: present
+    regexp: '^PYSPARK_PYTHON='
+    line: "PYSPARK_PYTHON=/usr/bin/python3"

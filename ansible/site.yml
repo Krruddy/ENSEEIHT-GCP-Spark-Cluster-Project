@@ -8,6 +8,7 @@
   roles:
     - common # Installs vim, curl, htop, net-tools
     - java
+    - python
     - spark_base # Spark
     - hadoop_base # HDFS
   tags: common
