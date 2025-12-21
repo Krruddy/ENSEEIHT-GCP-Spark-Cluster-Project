@@ -14,7 +14,6 @@
 # ==========================================
 # 2. Master Node Configuration
 # ==========================================
-
 - name: Apply Master Node Configuration
   hosts: gcp_role_master
   become: yes
@@ -22,3 +21,14 @@
   roles:
     - hadoop_master # HDFS Master Node Configuration
   tags: master
+
+# ==========================================
+# 3. Master Node Configuration
+# ==========================================
+- name: Apply Worker Node Configuration
+  hosts: gcp_role_worker
+  become: yes
+  remote_user: user
+  roles:
+    - hadoop_worker # HDFS Worker Node Configuration
+  tags: worker
