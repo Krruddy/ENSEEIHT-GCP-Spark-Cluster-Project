@@ -1,8 +1,4 @@
 ---
-- name: Update apt cache
-  apt:
-    update_cache: yes
-
 - name: Install essential system packages
   apt:
     name:
@@ -13,6 +9,6 @@
       - net-tools
       - htop
       - git
-      - python3-pip
       - software-properties-common
     state: present
+    update_cache: yes
