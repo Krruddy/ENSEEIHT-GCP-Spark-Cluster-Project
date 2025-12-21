@@ -1,0 +1,48 @@
+---
+- name: Create jobs directory on edge server
+  file:
+    path: "/home/{{ hadoop_user }}/spark-jobs"
+    state: directory
+    owner: "{{ hadoop_user }}"
+    group: "{{ hadoop_group }}"
+    mode: '0755'
+
+- name: Create data directory on edge server
+  file:
+    path: "/home/{{ hadoop_user }}/spark-data"
+    state: directory
+    owner: "{{ hadoop_user }}"
+    group: "{{ hadoop_group }}"
+    mode: '0755'
+
+- name: Copy job scripts to edge server
+  copy:
+    src: "{{ item }}"
+    dest: "/home/{{ hadoop_user }}/spark-jobs/"
+    owner: "{{ hadoop_user }}"
+    group: "{{ hadoop_group }}"
+    mode: '0755'
+  with_fileglob:
+    - "{{ playbook_dir }}/../spark/scripts/*.py"
+
+- name: Copy data files to edge server
+  copy:
+    src: "{{ item }}"
+    dest: "/home/{{ hadoop_user }}/spark-data/"
+    owner: "{{ hadoop_user }}"
+    group: "{{ hadoop_group }}"
+    mode: '0644'
+  with_fileglob:
+    - "{{ playbook_dir }}/../spark/data/*"
+
+- name: Create HDFS Input Directory
+  become: yes
+  become_user: "{{ hadoop_user }}"
+  shell: "{{ hadoop_link_dir }}/bin/hdfs dfs -mkdir -p /input"
+
+- name: Upload data to HDFS
+  become: yes
+  become_user: "{{ hadoop_user }}"
+  shell: "{{ hadoop_link_dir }}/bin/hdfs dfs -put -f /home/{{ hadoop_user }}/spark-data/{{ item | basename }} /input/"
+  with_fileglob:
+    - "{{ playbook_dir }}/../spark/data/*"

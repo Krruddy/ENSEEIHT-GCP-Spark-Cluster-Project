@@ -36,3 +36,14 @@
     - hadoop_worker # HDFS Worker Node Configuration
     - spark_worker # Spark Worker Node Configuration
   tags: worker
+
+# ==========================================
+# 4. Edge Node Configuration
+# ==========================================
+- name: Apply Edge Node Configuration (Configure Edge Node and Deploy Spark Artifacts)
+  hosts: gcp_role_edge
+  become: yes
+  remote_user: user
+  roles:
+    - spark_artifacts # Configure Edge Node and Deploy Spark Jobs/Data (including HDFS directories and uploads)
+  tags: spark_artifacts
