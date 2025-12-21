@@ -1,0 +1,6 @@
+<configuration>
+    <property>
+        <name>fs.defaultFS</name>
+        <value>hdfs://{{ hostvars['spk-mst-01']['ansible_host'] }}:9000</value>
+    </property>
+</configuration>

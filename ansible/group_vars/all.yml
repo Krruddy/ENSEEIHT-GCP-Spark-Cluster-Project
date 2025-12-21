@@ -27,3 +27,21 @@ spark_download_url: "https://dlcdn.apache.org/spark/spark-{{ spark_version }}/sp
 # ==========================================
 spark_user: "spark"
 spark_group: "spark"
+
+# ==========================================
+# Hadoop (HDFS) Configuration
+# ==========================================
+hadoop_version: "3.3.6"
+hadoop_install_parent_dir: "/opt"
+hadoop_destination_dir: "{{ hadoop_install_parent_dir }}/hadoop-{{ hadoop_version }}"
+hadoop_link_dir: "/opt/hadoop"
+
+hadoop_download_url: "https://dlcdn.apache.org/hadoop/common/hadoop-{{ hadoop_version }}/hadoop-{{ hadoop_version }}.tar.gz"
+hadoop_checksum_download_url: "https://dlcdn.apache.org/hadoop/common/hadoop-{{ hadoop_version }}/hadoop-{{ hadoop_version }}.tar.gz.sha256"
+
+# The Identity that owns the HDFS data
+hadoop_user: "hadoop"
+hadoop_group: "hadoop"
+
+# HDFS Configuration
+hdfs_replication_factor: 2 

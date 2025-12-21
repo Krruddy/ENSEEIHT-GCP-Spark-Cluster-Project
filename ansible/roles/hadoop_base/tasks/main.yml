@@ -1,0 +1,86 @@
+---
+- block:
+  - name: Create Hadoop group
+    group:
+      name: "{{ hadoop_group }}"
+      state: present
+      system: yes
+
+  - name: Create Hadoop user
+    user:
+      name: "{{ hadoop_user }}"
+      group: "{{ hadoop_group }}"
+      shell: /bin/bash
+      system: yes
+
+
+
+- block:
+  - name: Ensure install directory exists
+    file:
+      path: "{{ hadoop_install_parent_dir }}"
+      state: directory
+      mode: '0755'
+
+  - name: Download Hadoop
+    get_url:
+      url: "{{ hadoop_download_url }}"
+      dest: "{{ hadoop_destination_dir }}.tgz"
+      checksum: "sha256:{{ hadoop_checksum_download_url }}"
+
+  - name: Unarchive Hadoop
+    unarchive:
+      src: "{{ hadoop_destination_dir }}.tgz"
+      dest: "{{ hadoop_install_parent_dir }}"
+      owner: "{{ hadoop_user }}"
+      group: "{{ hadoop_group }}"
+      remote_src: yes
+      creates: "{{ hadoop_destination_dir }}"
+
+    - name: Create /opt/hadoop symlink
+      file:
+        src: "{{ hadoop_destination_dir }}"
+        dest: "{{ hadoop_link_dir }}"
+        state: link
+        owner: "{{ hadoop_user }}"
+        group: "{{ hadoop_group }}"
+
+- block:
+  - name: Configure core-site.xml 
+    template:
+      src: core-site.xml.j2
+      dest: "{{ hadoop_link_dir }}/etc/hadoop/core-site.xml"
+      owner: "{{ hadoop_user }}"
+      group: "{{ hadoop_group }}"
+
+  - name: Configure hdfs-site.xml (Replication & Data Dirs)
+    template:
+      src: hdfs-site.xml.j2
+      dest: "{{ hadoop_link_dir }}/etc/hadoop/hdfs-site.xml"
+      owner: "{{ hadoop_user }}"
+      group: "{{ hadoop_group }}"
+
+  - name: Configure hadoop-env.sh (Set JAVA_HOME)
+    lineinfile:
+      path: "{{ hadoop_link_dir }}/etc/hadoop/hadoop-env.sh"
+      regexp: '^export JAVA_HOME='
+      # We reuse the variable from the 'java' role for consistency
+      line: "export JAVA_HOME={{ java_home }}"
+      owner: "{{ hadoop_user }}"
+      group: "{{ hadoop_group }}"
+
+- block:
+  - name: Set HADOOP_HOME environment variable
+    lineinfile:
+      path: /etc/environment
+      state: present
+      regexp: '^HADOOP_HOME='
+      line: "HADOOP_HOME={{ hadoop_link_dir }}"
+
+  - name: Add Hadoop binaries to PATH
+    lineinfile:
+      path: /etc/profile.d/hadoop_path.sh
+      state: present
+      create: yes
+      mode: '0644'
+      line: 'export PATH=$PATH:{{ hadoop_link_dir }}/bin:{{ hadoop_link_dir }}/sbin'
