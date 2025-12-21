@@ -47,7 +47,8 @@ jobs:
           # Pass Terraform variables as environment variables
           TF_VAR_project_id: ${{ env.PROJECT_ID }}
           TF_VAR_project_number: ${{ env.PROJECT_NUMBER }}
-          TF_VAR_ssh_public_key_ruddy: ${{ secrets.SSH_PUBLIC_KEY_RUDDY }}
+          TF_VAR_ssh_public_key_ruddy_desktop: ${{ secrets.SSH_PUBLIC_KEY_RUDDY_DESKTOP }}
+          TF_VAR_ssh_public_key_ruddy_laptop: ${{ secrets.SSH_PUBLIC_KEY_RUDDY_LAPTOP }}
           TF_VAR_ssh_public_key_landry: ${{ secrets.SSH_PUBLIC_KEY_LANDRY }}
           TF_VAR_ssh_public_key_ansible_runner: ${{ secrets.SSH_PUBLIC_KEY_ANSIBLE_RUNNER }}
         run: |
