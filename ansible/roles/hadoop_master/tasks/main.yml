@@ -1,0 +1,36 @@
+---
+- name: Install HDFS NameNode Service
+  template:
+    src: hdfs-namenode.service.j2
+    dest: /etc/systemd/system/hdfs-namenode.service
+
+# 2. Format the NameNode (if not already formatted)
+- name: Check if NameNode is formatted
+  stat:
+    path: "/var/lib/hadoop/dfs/name/current/VERSION"
+  register: namenode_marker
+
+- name: Ensure NameNode storage directory exists
+  file:
+    path: /var/lib/hadoop/dfs/name
+    state: directory
+    owner: "{{ hadoop_user }}"
+    group: "{{ hadoop_group }}"
+    mode: '0700' # Secure: Only the owner can read/write metadata
+    recurse: yes
+  when: not namenode_marker.stat.exists
+
+- name: Format NameNode
+  command: "{{ hadoop_link_dir }}/bin/hdfs namenode -format -force"
+  become_user: "{{ hadoop_user }}"
+  # ONLY run if the directory is empty/missing
+  when: not namenode_marker.stat.exists
+
+# 3. Start the Service
+- name: Start and Enable NameNode
+  ansible.builtin.systemd:
+    name: hdfs-namenode
+    state: started
+    enabled: yes
+    daemon_reload: true
+
