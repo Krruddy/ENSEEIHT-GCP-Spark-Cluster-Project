@@ -1,0 +1,16 @@
+[Unit]
+Description=Hadoop NameNode
+After=network.target
+
+[Service]
+User={{ hadoop_user }}
+Group={{ hadoop_group }}
+Type=simple
+Environment="JAVA_HOME={{ java_home }}"
+# The 'hdfs' command handles the classpath and environment setup for us
+ExecStart={{ hadoop_link_dir }}/bin/hdfs namenode
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

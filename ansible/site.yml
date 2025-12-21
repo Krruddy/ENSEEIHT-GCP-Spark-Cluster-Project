@@ -10,3 +10,15 @@
     - java
     - spark_base # Spark
     - hadoop_base # HDFS
+
+# ==========================================
+# 2. Master Node Configuration
+# ==========================================
+
+- name: Apply Master Node Configuration
+  hosts: gcp_role_master
+  become: yes
+  remote_user: user
+  roles:
+    - hadoop_master # HDFS Master Node Configuration
+  tags: master
