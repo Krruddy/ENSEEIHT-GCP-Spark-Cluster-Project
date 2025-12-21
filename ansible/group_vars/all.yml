@@ -37,7 +37,8 @@ hadoop_destination_dir: "{{ hadoop_install_parent_dir }}/hadoop-{{ hadoop_versio
 hadoop_link_dir: "/opt/hadoop"
 
 hadoop_download_url: "https://dlcdn.apache.org/hadoop/common/hadoop-{{ hadoop_version }}/hadoop-{{ hadoop_version }}.tar.gz"
-hadoop_checksum_download_url: "https://dlcdn.apache.org/hadoop/common/hadoop-{{ hadoop_version }}/hadoop-{{ hadoop_version }}.tar.gz.sha256"
+hadoop_checksum_download_url: "https://dlcdn.apache.org/hadoop/common/hadoop-{{ hadoop_version }}/hadoop-{{ hadoop_version }}.tar.gz.sha512"
+hadoop_checksum: "sha512:de3eaca2e0517e4b569a88b63c89fae19cb8ac6c01ff990f1ff8f0cc0f3128c8e8a23db01577ca562a0e0bb1b4a3889f8c74384e609cd55e537aada3dcaa9f8a"
 
 # The Identity that owns the HDFS data
 hadoop_user: "hadoop"
