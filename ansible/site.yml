@@ -40,10 +40,10 @@
 # ==========================================
 # 4. Edge Node Configuration
 # ==========================================
-- name: Apply Edge Node Configuration (Transfer Spark Artifacts)
+- name: Apply Edge Node Configuration (Configure Edge Node and Deploy Spark Artifacts)
   hosts: gcp_role_edge
   become: yes
   remote_user: user
   roles:
-    - spark_artifacts # Transfer Spark Job, Data, etc. to Edge Node
+    - spark_artifacts # Configure Edge Node and Deploy Spark Jobs/Data (including HDFS directories and uploads)
   tags: spark_artifacts
