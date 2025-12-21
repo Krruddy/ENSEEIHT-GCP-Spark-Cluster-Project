@@ -1,0 +1,12 @@
+---
+- name: Install Spark Worker Service
+  template:
+    src: spark-worker.service.j2
+    dest: /etc/systemd/system/spark-worker.service
+
+- name: Start and Enable Spark Worker
+  systemd:
+    name: spark-worker
+    state: started
+    enabled: yes
+    daemon_reload: true

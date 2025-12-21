@@ -1,0 +1,17 @@
+[Unit]
+Description=Apache Spark Worker
+After=network.target
+
+[Service]
+User={{ spark_user }}
+Group={{ spark_group }}
+Type=simple
+WorkingDirectory={{ spark_link_dir }}
+Environment="JAVA_HOME={{ java_home }}"
+Environment="SPARK_HOME={{ spark_link_dir }}"
+ExecStart={{ spark_link_dir }}/bin/spark-class org.apache.spark.deploy.worker.Worker spark://{{ hostvars['spk-mst-01']['ansible_host'] }}:7077
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
