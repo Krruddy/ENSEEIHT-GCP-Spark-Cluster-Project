@@ -37,13 +37,13 @@
       remote_src: yes
       creates: "{{ hadoop_destination_dir }}"
 
-    - name: Create /opt/hadoop symlink
-      file:
-        src: "{{ hadoop_destination_dir }}"
-        dest: "{{ hadoop_link_dir }}"
-        state: link
-        owner: "{{ hadoop_user }}"
-        group: "{{ hadoop_group }}"
+  - name: Create /opt/hadoop symlink
+    file:
+      src: "{{ hadoop_destination_dir }}"
+      dest: "{{ hadoop_link_dir }}"
+      state: link
+      owner: "{{ hadoop_user }}"
+      group: "{{ hadoop_group }}"
 
 - block:
   - name: Configure core-site.xml 
