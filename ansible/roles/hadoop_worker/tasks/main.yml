@@ -1,0 +1,33 @@
+---
+- name: Format HDFS Disk (ext4)
+  filesystem:
+    fstype: ext4
+    dev: /dev/disk/by-id/google-hdfs_disk
+
+- name: Mount HDFS Disk
+  mount:
+    path: /mnt/hdfs_data
+    src: /dev/disk/by-id/google-hdfs_disk
+    fstype: ext4
+    state: mounted
+
+- name: Ensure Permissions on Data Dir
+  file:
+    path: /mnt/hdfs_data
+    state: directory
+    owner: "{{ hadoop_user }}"
+    group: "{{ hadoop_group }}"
+    mode: '0755'
+
+# Create the Service File
+- name: Install HDFS DataNode Service
+  template:
+    src: hdfs-datanode.service.j2
+    dest: /etc/systemd/system/hdfs-datanode.service
+
+# 3. Start the Service
+- name: Start and Enable DataNode
+  systemd:
+    name: hdfs-datanode
+    state: started
+    enabled: yes

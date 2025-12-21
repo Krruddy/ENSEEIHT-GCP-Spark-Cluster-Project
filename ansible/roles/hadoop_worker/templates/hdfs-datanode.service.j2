@@ -1,5 +1,5 @@
 [Unit]
-Description=Hadoop NameNode
+Description=Hadoop DataNode
 After=network.target
 
 [Service]
@@ -7,7 +7,7 @@ User={{ hadoop_user }}
 Group={{ hadoop_group }}
 Type=simple
 Environment="JAVA_HOME={{ java_home }}"
-ExecStart={{ hadoop_link_dir }}/bin/hdfs namenode
+ExecStart={{ hadoop_link_dir }}/bin/hdfs datanode
 Restart=always
 RestartSec=10
 
