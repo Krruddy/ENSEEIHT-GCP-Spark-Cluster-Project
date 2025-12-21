@@ -10,6 +10,7 @@
     - java
     - spark_base # Spark
     - hadoop_base # HDFS
+  tags: common
 
 # ==========================================
 # 2. Master Node Configuration
@@ -20,6 +21,7 @@
   remote_user: user
   roles:
     - hadoop_master # HDFS Master Node Configuration
+    - spark_master # Spark Master Node Configuration
   tags: master
 
 # ==========================================

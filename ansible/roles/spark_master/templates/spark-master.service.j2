@@ -1,0 +1,19 @@
+[Unit]
+Description=Apache Spark Master
+After=network.target
+
+[Service]
+User={{ spark_user }}
+Group={{ spark_group }}
+Type=simple
+WorkingDirectory={{ spark_link_dir }}
+Environment="JAVA_HOME={{ java_home }}"
+Environment="SPARK_HOME={{ spark_link_dir }}"
+# We bind to port 7077 (RPC) and 8080 (Web UI)
+# We use the internal IP (ansible_host) so it is accessible from the VPC
+ExecStart={{ spark_link_dir }}/bin/spark-class org.apache.spark.deploy.master.Master --ip {{ ansible_host }} --port 7077 --webui-port 8080
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
