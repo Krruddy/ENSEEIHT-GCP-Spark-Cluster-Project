@@ -9,8 +9,8 @@
     - common # Installs vim, curl, htop, net-tools
     - java
     - python
-    - spark_base # Spark
     - hadoop_base # HDFS
+    - spark_base # Spark
   tags: common
 
 # ==========================================

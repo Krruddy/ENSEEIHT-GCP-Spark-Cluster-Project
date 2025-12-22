@@ -59,3 +59,12 @@
     create: yes
     mode: '0644'
     line: 'export PATH=$PATH:{{ spark_link_dir }}/bin:{{ spark_link_dir }}/sbin'
+
+- name: Link Hadoop Configs to Spark
+  file:
+    src: "{{ hadoop_link_dir }}/etc/hadoop/{{ item }}"
+    dest: "{{ spark_link_dir }}/conf/{{ item }}"
+    state: link
+  loop:
+    - core-site.xml
+    - hdfs-site.xml
