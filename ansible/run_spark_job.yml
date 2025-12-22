@@ -1,0 +1,53 @@
+---
+- name: Execute Spark Job
+  hosts: gcp_role_edge
+  vars:
+    job_script: "{{ job_name | default('test.py') }}"
+    input_path: "/input/{{ data_name | default('lorem_ipsum.txt') }}"
+    output_path: "/output/{{ output_name | default('test') }}"
+  become: yes
+  become_user : "{{ hadoop_user }}"
+  
+  tasks:
+    - name: Clean previous output in HDFS
+      shell: "{{ hadoop_link_dir }}/bin/hdfs dfs -rm -r -f {{ output_path }}"
+
+    - name: Submit Spark job
+      shell: |
+        {{ spark_link_dir }}/bin/spark-submit \
+          --master spark://{{ hostvars[groups['gcp_role_master'][0]]['ansible_host'] }}:7077 \
+          --deploy-mode client \
+          /home/{{ hadoop_user }}/spark-jobs/{{ job_script }} {{ output_path }} {{ input_path }}
+      register: spark_job_result
+
+    - name: Display job output
+      debug:
+        var: spark_job_result.stdout_lines
+
+    - name: Fetch results from HDFS to local
+      shell: "{{ hadoop_link_dir }}/bin/hdfs dfs -get {{ output_path }} /tmp/job-output-{{ output_path | basename }}"
+
+    - name: Archive results
+      archive:
+        path: "/tmp/job-output-{{ output_path | basename }}"
+        dest: "/tmp/job-output-{{ output_path | basename }}.tar.gz"
+        format: gz
+
+    - name: Download results to control machine
+      fetch:
+        src: "/tmp/job-output-{{ output_path | basename }}.tar.gz"
+        dest: "{{ playbook_dir }}/../spark/output/"
+        flat: yes
+
+    - name: Extract results
+      become: no
+      unarchive:
+        src: "{{ playbook_dir }}/../spark/output/job-output-{{ output_path | basename }}.tar.gz"
+        dest: "{{ playbook_dir }}/../spark/output/"
+        remote_src: no
+      delegate_to: localhost
+
+    - name: Clean up
+      file:
+        path: "/tmp/job-output-{{ output_path | basename }}"
+        state: absent
