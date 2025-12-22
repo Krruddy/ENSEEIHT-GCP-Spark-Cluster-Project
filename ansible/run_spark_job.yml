@@ -32,6 +32,7 @@
         path: "/tmp/job-output-{{ output_path | basename }}"
         dest: "/tmp/job-output-{{ output_path | basename }}.tar.gz"
         format: gz
+        remove: yes
 
     - name: Download results to control machine
       fetch:
