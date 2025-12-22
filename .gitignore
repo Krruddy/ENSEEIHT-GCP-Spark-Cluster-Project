@@ -9,3 +9,8 @@ gha-creds-*.json
 .idea/
 .vscode/
 *terraform.lock.hcl
+
+# Python cache files
+__pycache__/
+*.pyc
+*.pyo
