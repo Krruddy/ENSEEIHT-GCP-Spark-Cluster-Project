@@ -86,7 +86,7 @@ locals {
       master_boot_disk = 30       
       worker_boot_disk = 30
       
-      hdfs_disk_type  = "pd-balanced"   # SSD 
+      hdfs_disk_type  = "pd-balanced"   # Balanced persistent disk
       hdfs_disk = 50
     }
   }
