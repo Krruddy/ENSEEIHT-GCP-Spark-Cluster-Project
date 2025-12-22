@@ -16,9 +16,9 @@ output_path = sys.argv[1].lstrip('/')
 data_path = sys.argv[2].lstrip('/')
 
 try:
-    df = spark.read.text(f"hdfs://spk-mst-01:9000/{data_path}")
+    df = spark.read.text(f"hdfs:///{data_path}")
     print(f"Read {df.count()} lines from HDFS.")
-    df.write.mode("overwrite").text(f"hdfs://spk-mst-01:9000/{output_path}")
+    df.write.mode("overwrite").text(f"hdfs://{output_path}")
 
 except Exception as e:
     print(f"HDFS Operation Failed: {e}")
