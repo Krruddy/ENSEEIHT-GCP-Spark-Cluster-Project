@@ -126,10 +126,3 @@ This project uses **Workload Identity Federation (WIF)** to authenticate GitHub 
 ## 📚 Documentation
 
 Detailed documentation is available in the **[Project Wiki](https://www.google.com/search?q=https://github.com/Krruddy/ENSEEIHT-GCP-Spark-Cluster-Project/wiki)**:
-
-* **[[Getting Started]]**: Setup Guide & Prerequisites.
-* **[[Architecture Reference]]**: Network Topology & Compute Specs.
-* **[[Infrastructure (Terraform)]]**: Provisioning Logic & State Management.
-* **[[Configuration (Ansible)]]**: Playbooks, Roles, & Connectivity.
-* **[[Configuration (Spark & Hadoop)]]**: HDFS/Spark Service Architecture.
-* **[[Developer Guide]]**: Coding Standards & Contribution Rules.
