@@ -1,0 +1,61 @@
+---
+# Configure Spark History Server on the Master Node
+# The History Server provides a web UI to view completed Spark applications
+
+- name: Create HDFS directory for Spark event logs
+  ansible.builtin.command: >
+    {{ hadoop_link_dir }}/bin/hdfs dfs -mkdir -p /spark-logs
+  become: yes
+  become_user: "{{ hadoop_user }}"
+  ignore_errors: yes # Directory might already exist
+
+- name: Set permissions on HDFS spark-logs directory
+  ansible.builtin.command: >
+    {{ hadoop_link_dir }}/bin/hdfs dfs -chmod 1777 /spark-logs
+  become: yes
+  become_user: "{{ hadoop_user }}"
+
+- name: Create local directory for History Server logs
+  ansible.builtin.file:
+    path: /var/log/spark-history
+    state: directory
+    owner: "{{ spark_user }}"
+    group: "{{ spark_group }}"
+    mode: '0755'
+  become: yes
+
+- name: Configure Spark to log events to HDFS
+  ansible.builtin.lineinfile:
+    path: "{{ spark_link_dir }}/conf/spark-defaults.conf"
+    line: "{{ item }}"
+    create: yes
+    owner: "{{ spark_user }}"
+    group: "{{ spark_group }}"
+    mode: '0644'
+  become: yes
+  loop:
+    - "spark.eventLog.enabled true"
+    - "spark.eventLog.dir hdfs://{{ hostvars[groups['gcp_role_master'][0]]['ansible_hostname'] }}:9000/spark-logs"
+    - "spark.history.fs.logDirectory hdfs://{{ hostvars[groups['gcp_role_master'][0]]['ansible_hostname'] }}:9000/spark-logs"
+
+- name: Deploy Spark History Server systemd service
+  ansible.builtin.template:
+    src: spark-history-server.service.j2
+    dest: /etc/systemd/system/spark-history-server.service
+    owner: root
+    group: root
+    mode: '0644'
+  become: yes
+  notify: Restart spark history server
+
+- name: Reload systemd daemon
+  ansible.builtin.systemd:
+    daemon_reload: yes
+  become: yes
+
+- name: Enable and start Spark History Server
+  ansible.builtin.systemd:
+    name: spark-history-server
+    enabled: yes
+    state: started
+  become: yes

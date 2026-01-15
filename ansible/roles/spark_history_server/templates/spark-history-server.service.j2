@@ -1,0 +1,19 @@
+[Unit]
+Description=Spark History Server
+After=network.target hdfs-namenode.service
+Wants=hdfs-namenode.service
+
+[Service]
+Type=simple
+User={{ spark_user }}
+Group={{ spark_group }}
+Environment="SPARK_HOME={{ spark_link_dir }}"
+Environment="JAVA_HOME={{ java_home }}"
+Environment="HADOOP_CONF_DIR={{ hadoop_link_dir }}/etc/hadoop"
+ExecStart={{ spark_link_dir }}/sbin/start-history-server.sh
+ExecStop={{ spark_link_dir }}/sbin/stop-history-server.sh
+Restart=on-failure
+RestartSec=10s
+
+[Install]
+WantedBy=multi-user.target

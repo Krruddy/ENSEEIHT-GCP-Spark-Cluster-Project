@@ -1,0 +1,6 @@
+---
+- name: Restart spark history server
+  ansible.builtin.systemd:
+    name: spark-history-server
+    state: restarted
+  become: yes

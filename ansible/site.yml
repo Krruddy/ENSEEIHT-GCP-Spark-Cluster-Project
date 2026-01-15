@@ -24,6 +24,7 @@
   roles:
     - hadoop_master # HDFS Master Node Configuration
     - spark_master # Spark Master Node Configuration
+    - spark_history_server # Spark History Server Configuration
   tags: master
 
 # ==========================================
