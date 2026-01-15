@@ -36,8 +36,7 @@ resource "google_compute_router_nat" "nat" {
   source_subnetwork_ip_ranges_to_nat = "ALL_SUBNETWORKS_ALL_IP_RANGES"
 }
 
-# Firewall: Allow SSH to Edge from ANYWHERE
-# Should we instead target the public subnet directly?
+# Firewall: Allow SSH to Edge from specified sources only
 resource "google_compute_firewall" "allow_ssh_edge" {
   name    = "allow-ssh-edge"
   network = google_compute_network.vpc.id
@@ -47,8 +46,10 @@ resource "google_compute_firewall" "allow_ssh_edge" {
     ports    = ["22"]
   }
 
-  source_ranges = ["0.0.0.0/0"] 
+  source_ranges = var.allowed_ssh_sources
   target_tags   = ["edge-node"]
+
+  description = "Allow SSH access to edge node from trusted sources only. Configure allowed_ssh_sources variable to restrict access."
 }
 
 # Firewall: Allow EVERYTHING internal (Cluster chatter)

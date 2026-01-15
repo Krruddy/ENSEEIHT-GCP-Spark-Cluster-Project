@@ -65,6 +65,17 @@ variable "infrastructure_tier" {
   default     = "standard"
 }
 
+variable "allowed_ssh_sources" {
+  description = "List of CIDR blocks allowed to SSH to the edge node. Use ['0.0.0.0/0'] to allow from anywhere (not recommended for production)"
+  type        = list(string)
+  default     = ["0.0.0.0/0"]
+
+  validation {
+    condition     = length(var.allowed_ssh_sources) > 0
+    error_message = "At least one CIDR block must be specified for SSH access"
+  }
+}
+
 locals {
   machine_specs = {
     minimal = {
