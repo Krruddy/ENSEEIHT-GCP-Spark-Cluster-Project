@@ -76,6 +76,18 @@ variable "allowed_ssh_sources" {
   }
 }
 
+variable "enable_monitoring" {
+  description = "Enable Cloud Monitoring alerts and dashboards"
+  type        = bool
+  default     = true
+}
+
+variable "monitoring_email" {
+  description = "Email address to receive monitoring alerts. Leave empty to disable email notifications."
+  type        = string
+  default     = ""
+}
+
 locals {
   machine_specs = {
     minimal = {

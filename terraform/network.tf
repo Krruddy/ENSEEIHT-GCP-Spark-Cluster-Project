@@ -52,20 +52,71 @@ resource "google_compute_firewall" "allow_ssh_edge" {
   description = "Allow SSH access to edge node from trusted sources only. Configure allowed_ssh_sources variable to restrict access."
 }
 
-# Firewall: Allow EVERYTHING internal (Cluster chatter)
-resource "google_compute_firewall" "allow_internal" {
-  name    = "allow-internal-communication"
+# Firewall: Allow SSH internal (for bastion access to private nodes)
+resource "google_compute_firewall" "allow_internal_ssh" {
+  name    = "allow-internal-ssh"
   network = google_compute_network.vpc.id
 
   allow {
     protocol = "tcp"
+    ports    = ["22"]
   }
+
+  source_ranges = ["10.0.0.0/16"]
+  description   = "Allow SSH between all nodes in the VPC"
+}
+
+# Firewall: Allow Spark cluster communication
+resource "google_compute_firewall" "allow_spark_cluster" {
+  name    = "allow-spark-cluster"
+  network = google_compute_network.vpc.id
+
   allow {
-    protocol = "udp"
+    protocol = "tcp"
+    ports    = [
+      "7077",  # Spark Master
+      "8080",  # Spark Master Web UI
+      "8081",  # Spark Worker Web UI
+      "4040",  # Spark Application UI
+      "18080", # Spark History Server
+    ]
   }
+
+  source_ranges = ["10.0.0.0/16"]
+  target_tags   = ["spark-cluster", "spark-master", "spark-worker"]
+  description   = "Allow Spark cluster communication"
+}
+
+# Firewall: Allow HDFS communication
+resource "google_compute_firewall" "allow_hdfs_cluster" {
+  name    = "allow-hdfs-cluster"
+  network = google_compute_network.vpc.id
+
+  allow {
+    protocol = "tcp"
+    ports    = [
+      "9000",  # HDFS NameNode IPC
+      "9870",  # HDFS NameNode Web UI
+      "9864",  # HDFS DataNode
+      "9866",  # HDFS DataNode Data Transfer
+      "9867",  # HDFS DataNode IPC
+    ]
+  }
+
+  source_ranges = ["10.0.0.0/16"]
+  target_tags   = ["spark-cluster", "spark-master", "spark-worker"]
+  description   = "Allow HDFS cluster communication"
+}
+
+# Firewall: Allow ICMP for network diagnostics
+resource "google_compute_firewall" "allow_internal_icmp" {
+  name    = "allow-internal-icmp"
+  network = google_compute_network.vpc.id
+
   allow {
     protocol = "icmp"
   }
 
-  source_ranges = ["10.0.0.0/16"] 
+  source_ranges = ["10.0.0.0/16"]
+  description   = "Allow ICMP for ping and network diagnostics"
 }

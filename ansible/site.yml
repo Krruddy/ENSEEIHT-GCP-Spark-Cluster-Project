@@ -9,6 +9,7 @@
     - common # Installs vim, curl, htop, net-tools
     - java
     - python
+    - monitoring # Cloud Monitoring/Logging
     - hadoop_base # HDFS
     - spark_base # Spark
   tags: common

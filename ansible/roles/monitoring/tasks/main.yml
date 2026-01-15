@@ -1,0 +1,44 @@
+---
+# Install and configure Google Cloud Monitoring Agent (Ops Agent)
+# The Ops Agent combines logging and monitoring in one unified agent
+
+- name: Add Google Cloud Ops Agent repository key
+  ansible.builtin.apt_key:
+    url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+    state: present
+  become: true
+
+- name: Add Google Cloud Ops Agent repository
+  ansible.builtin.apt_repository:
+    repo: "deb https://packages.cloud.google.com/apt google-cloud-ops-agent-{{ ansible_distribution_release }}-all main"
+    state: present
+    filename: google-cloud-ops-agent
+  become: true
+
+- name: Update apt cache
+  ansible.builtin.apt:
+    update_cache: yes
+  become: true
+
+- name: Install Google Cloud Ops Agent
+  ansible.builtin.apt:
+    name: google-cloud-ops-agent
+    state: present
+  become: true
+
+- name: Deploy Ops Agent configuration for Spark/HDFS
+  ansible.builtin.template:
+    src: config.yaml.j2
+    dest: /etc/google-cloud-ops-agent/config.yaml
+    owner: root
+    group: root
+    mode: '0644'
+  become: true
+  notify: Restart ops agent
+
+- name: Ensure Ops Agent is started and enabled
+  ansible.builtin.systemd:
+    name: google-cloud-ops-agent
+    state: started
+    enabled: yes
+  become: true
