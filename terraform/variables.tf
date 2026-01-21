@@ -22,7 +22,8 @@ variable "zone" {
 
 variable "worker_count" {
   description = "Number of Spark worker nodes"
-  default     = 2
+  type        = number
+  default     = 10
 }
 
 variable "os_image" {
@@ -62,7 +63,7 @@ variable "ssh_public_key_ansible_runner" {
 variable "infrastructure_tier" {
   description = "Tier of infrastructure: minimal, standard, or high-performance"
   type        = string
-  default     = "standard"
+  default     = "high-performance"
 }
 
 locals {
@@ -88,6 +89,18 @@ locals {
       
       hdfs_disk_type  = "pd-balanced"   # Balanced persistent disk
       hdfs_disk = 50
+    }
+    high-performance = {
+      edge_type   = "e2-standard-2"
+      master_type = "e2-standard-4"
+      worker_type = "e2-standard-4"
+
+      edge_boot_disk   = 50
+      master_boot_disk = 100
+      worker_boot_disk = 100
+
+      hdfs_disk_type = "pd-ssd"
+      hdfs_disk      = 100
     }
   }
 }
