@@ -1,4 +1,5 @@
 import sys
+import time
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import explode, split, col
 
@@ -21,6 +22,8 @@ def main():
         .appName("WordCount") \
         .getOrCreate()
 
+    start_time = time.time()
+
     try:
         # Read input data
         # Assuming the input is a text file or directory of text files
@@ -28,7 +31,7 @@ def main():
         lines = spark.read.text(input_uri)
 
         # Perform Word Count
-        # 1. Split lines into words using whitespace as delimiter
+        # 1. Split lines into words using whitespace as a delimiter
         # 2. Explode the array of words into separate rows
         words = lines.select(
             explode(
@@ -54,6 +57,8 @@ def main():
         print(f"Error during Spark execution: {e}", file=sys.stderr)
         sys.exit(1)
     finally:
+        end_time = time.time()
+        print(f"Execution time: {end_time - start_time:.2f} seconds")
         spark.stop()
 
 if __name__ == "__main__":
