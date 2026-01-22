@@ -45,4 +45,6 @@ hadoop_user: "hadoop"
 hadoop_group: "hadoop"
 
 # HDFS Configuration
-hdfs_replication_factor: 2 
+# This number represents the number of times a piece of data is replicated across different nodes in the HDFS cluster.
+# 3 is usually a good default for production, but this value has to be greater than or equal to the number of worker nodes in your cluster.
+hdfs_replication_factor: 3

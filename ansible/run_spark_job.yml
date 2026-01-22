@@ -5,6 +5,8 @@
     job_script: "{{ job_name | default('test.py') }}"
     input_path: "/input/{{ data_name | default('lorem_ipsum.txt') }}"
     output_path: "/output/{{ output_name | default('test') }}"
+    num_executors: ""
+    executor_cores: ""
   become: yes
   become_user : "{{ hadoop_user }}"
   
@@ -13,11 +15,15 @@
       shell: "{{ hadoop_link_dir }}/bin/hdfs dfs -rm -r -f {{ output_path }}"
 
     - name: Submit Spark job
-      shell: |
-        {{ spark_link_dir }}/bin/spark-submit \
-          --master spark://{{ hostvars[groups['gcp_role_master'][0]]['ansible_host'] }}:7077 \
-          --deploy-mode client \
-          /home/{{ hadoop_user }}/spark-jobs/{{ job_script }} {{ output_path }} {{ input_path }}
+      shell: >
+        {{ spark_link_dir }}/bin/spark-submit
+        --master spark://{{ hostvars[groups['gcp_role_master'][0]]['ansible_host'] }}:7077
+        --deploy-mode client
+        {% if num_executors and executor_cores %}
+        --total-executor-cores {{ num_executors|int * executor_cores|int }}
+        {% endif %}
+        {{ '--executor-cores ' + executor_cores|string if executor_cores else '' }}
+        /home/{{ hadoop_user }}/spark-jobs/{{ job_script }} {{ output_path }} {{ input_path }}
       register: spark_job_result
 
     - name: Display job output
