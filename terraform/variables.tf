@@ -63,7 +63,7 @@ variable "ssh_public_key_ansible_runner" {
 variable "infrastructure_tier" {
   description = "Tier of infrastructure: minimal, standard, or high-performance"
   type        = string
-  default     = "minimal"
+  default     = "standard"
 }
 
 locals {
@@ -79,16 +79,16 @@ locals {
       hdfs_disk   = 20
     }
     standard = {
-      edge_type   = "e2-medium"     
-      master_type = "e2-standard-2" 
+      edge_type   = "e2-standard-2"     
+        master_type = "e2-standard-2" 
       worker_type = "e2-standard-2"
 
-      edge_boot_disk  = 20
-      master_boot_disk = 30       
-      worker_boot_disk = 30
+      edge_boot_disk  = 30
+      master_boot_disk = 20       
+      worker_boot_disk = 20
       
       hdfs_disk_type  = "pd-balanced"   # Balanced persistent disk
-      hdfs_disk = 50
+      hdfs_disk = 25
     }
     high-performance = {
       edge_type   = "e2-standard-2"
