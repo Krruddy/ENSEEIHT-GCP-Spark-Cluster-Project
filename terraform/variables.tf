@@ -72,11 +72,11 @@ locals {
       edge_type   = "e2-micro"
       master_type = "e2-small"  
       worker_type = "e2-small"  
-      edge_boot_disk   = 15
+      edge_boot_disk   = 30
       master_boot_disk   = 20
       worker_boot_disk   = 20
       hdfs_disk_type = "pd-standard"
-      hdfs_disk   = 10
+      hdfs_disk   = 20
     }
     standard = {
       edge_type   = "e2-medium"     
