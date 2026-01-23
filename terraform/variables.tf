@@ -23,7 +23,7 @@ variable "zone" {
 variable "worker_count" {
   description = "Number of Spark worker nodes"
   type        = number
-  default     = 5
+  default     = 10
 }
 
 variable "os_image" {
