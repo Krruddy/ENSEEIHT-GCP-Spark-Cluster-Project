@@ -63,7 +63,7 @@ variable "ssh_public_key_ansible_runner" {
 variable "infrastructure_tier" {
   description = "Tier of infrastructure: minimal, standard, or high-performance"
   type        = string
-  default     = "standard"
+  default     = "minimal"
 }
 
 locals {
