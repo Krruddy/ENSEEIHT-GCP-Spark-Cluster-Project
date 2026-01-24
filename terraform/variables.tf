@@ -80,8 +80,8 @@ locals {
     }
     standard = {
       edge_type   = "e2-standard-2"     
-        master_type = "e2-standard-2" 
-      worker_type = "e2-standard-2"
+      master_type = "e2-standard-2" 
+      worker_type = "e2-standard-2" # Max 10 due to 500 disk limit
 
       edge_boot_disk  = 30
       master_boot_disk = 20       
@@ -90,17 +90,17 @@ locals {
       hdfs_disk_type  = "pd-balanced"   # Balanced persistent disk
       hdfs_disk = 25
     }
-    standard_plus = {
+    standard_plus = { 
       edge_type   = "e2-standard-2"     
       master_type = "e2-standard-2" 
-      worker_type = "e2-standard-4"
+      worker_type = "e2-standard-4" # Max 7 due to CPU 32 limit
 
       edge_boot_disk  = 30
       master_boot_disk = 20       
       worker_boot_disk = 20
       
       hdfs_disk_type  = "pd-balanced"   # Balanced persistent disk
-      hdfs_disk = 25
+      hdfs_disk = 40
     }
     high-performance = {
       edge_type   = "e2-standard-4"
