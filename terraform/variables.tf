@@ -91,8 +91,8 @@ locals {
       hdfs_disk = 25
     }
     standard_plus = {
-      edge_type   = "e2-standard-4"     
-      master_type = "e2-standard-4" 
+      edge_type   = "e2-standard-2"     
+      master_type = "e2-standard-2" 
       worker_type = "e2-standard-4"
 
       edge_boot_disk  = 30
