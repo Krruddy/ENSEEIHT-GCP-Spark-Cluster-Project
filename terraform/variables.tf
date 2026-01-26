@@ -71,7 +71,7 @@ locals {
     minimal = {
       edge_type   = "e2-standard-2"
       master_type = "e2-standard-2"  
-      worker_type = "e2-micro"  
+      worker_type = "e2-micro"  # Max 15 due to 500 disk limit
       edge_boot_disk   = 30
       master_boot_disk   = 20
       worker_boot_disk   = 15
