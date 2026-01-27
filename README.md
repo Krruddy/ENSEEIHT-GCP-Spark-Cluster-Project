@@ -29,6 +29,70 @@ The cluster implements a secure 3-tier architecture within a custom Virtual Priv
 * **Dynamic Inventory:** Ansible automatically discovers nodes via GCP API labels, eliminating static host files.
 * **Persistent Storage:** HDFS is backed by dedicated persistent disks formatted as `ext4`.
 
+```mermaid
+graph TD
+    %% Users and External Access
+    User[User / Developer] -->|SSH :22| Edge
+    User -->|Spark Jobs| Edge
+
+    %% GCP Cloud Scope
+    subgraph GCP[Google Cloud Platform - region: europe-west1]
+        
+        %% VPC Definition
+        subgraph VPC[VPC: spark-vpc]
+            
+            %% Networking Components
+            NAT[Cloud NAT & Router]
+            FW_Edge[Firewall: allow-ssh-edge]
+            FW_Internal[Firewall: allow-internal]
+
+            %% Public Subnet
+            subgraph Public_Subnet[Public Subnet: 10.0.1.0/24]
+                Edge(<b>Edge Node</b><br/>edge-01<br/><i>e2-medium</i><br/>Public IP)
+            end
+
+            %% Private Subnet
+            subgraph Private_Subnet[Private Subnet: 10.0.2.0/24]
+                
+                %% Master Node
+                Master(<b>Spark Master</b><br/>spk-mst-01<br/><i>e2-standard-2</i><br/>HDFS NameNode)
+                
+                %% Worker Nodes (Grouped)
+                subgraph Workers[Spark Worker Cluster]
+                    Worker1(<b>Worker 01</b><br/>spk-wkr-1<br/><i>e2-standard-X</i>)
+                    Worker2(<b>Worker 02</b><br/>spk-wkr-2<br/><i>e2-standard-X</i>)
+                    WorkerN(... Worker N ...)
+                end
+
+                %% Attached Storage
+                Disk1[(<b>HDFS Data</b><br/>/mnt/hdfs_data<br/>Persistant Disk)]
+                
+                Worker1 --- Disk1
+                Worker2 --- Disk1
+            end
+        end
+    end
+
+    %% Network Flows
+    Edge <-->|Internal Traffic| Master
+    Edge <-->|Internal Traffic| Workers
+    Master <-->|Spark/HDFS Control| Workers
+    Workers <-->|Shuffle & Replication| Workers
+
+    %% Internet Access for Private Nodes
+    Master -.->|Egress Only| NAT
+    Workers -.->|Egress Only| NAT
+
+    %% Styling
+    classDef public fill:#e1f5fe,stroke:#01579b,stroke-width:2px;
+    classDef private fill:#fff3e0,stroke:#e65100,stroke-width:2px;
+    classDef storage fill:#f3e5f5,stroke:#4a148c,stroke-width:2px;
+    
+    class Public_Subnet public;
+    class Private_Subnet private;
+    class Disk1 storage;
+```
+
 ---
 
 ## 🛠 Prerequisites
