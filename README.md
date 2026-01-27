@@ -1,5 +1,5 @@
 # ENSEEIHT GCP Spark Cluster Project
- 
+
 This repository contains the source code for the **ENSEEIHT GCP Spark Cluster Project**, an engineering initiative to fully automate the deployment of an **Apache Spark** cluster on **Google Cloud Platform (GCP)**.
 
 The project uses industry-standard **Infrastructure-as-Code (IaC)** tools to create a repeatable, secure, and distributed Big Data environment.
