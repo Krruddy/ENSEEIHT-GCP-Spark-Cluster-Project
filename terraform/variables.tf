@@ -23,7 +23,7 @@ variable "zone" {
 variable "worker_count" {
   description = "Number of Spark worker nodes"
   type        = number
-  default     = 15
+  default     = 10
 }
 
 variable "os_image" {
@@ -63,7 +63,7 @@ variable "ssh_public_key_ansible_runner" {
 variable "infrastructure_tier" {
   description = "Tier of infrastructure: minimal, standard, or high-performance"
   type        = string
-  default     = "minimal"
+  default     = "standard"
 }
 
 locals {
