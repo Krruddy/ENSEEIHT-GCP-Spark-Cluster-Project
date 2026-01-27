@@ -30,6 +30,7 @@ The cluster implements a secure 3-tier architecture within a custom Virtual Priv
 * **Persistent Storage:** HDFS is backed by dedicated persistent disks formatted as `ext4`.
 
 ```mermaid
+
 ---
 config:
   layout: elk
@@ -70,7 +71,12 @@ flowchart TB
     classDef public fill:#e1f5fe,stroke:#01579b,stroke-width:2px
     classDef private fill:#fff3e0,stroke:#e65100,stroke-width:2px
     classDef workers fill:#fff3e0,stroke:#e65100,stroke-width:2px
-    classDef storage fill:#f3e5f5,stroke:#4a148c,stroke-width:2px```
+    classDef storage fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+
+    class Public_Subnet public;
+    class Private_Subnet private;
+    class Disk1 storage;
+    class Workers workers
 ```
 ---
 
